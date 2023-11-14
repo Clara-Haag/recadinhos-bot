@@ -16,11 +16,16 @@ logger = logging.getLogger(__name__)
 
 # decorador para restringir o acesso de comandos a usuários autorizados
 USUARIOS_AUTORIZADOS = [1456515969]
-CANAIS_CADASTRADOS = [-1002021874904, -4026266836]
 
 # váriaveis da função replicar
+CANAIS_CADASTRADOS = [-1002021874904, -4026266836]
 MENSAGEM, ASSINATURA = range(2)
 recado = {'titulo': "RECADO IMPORTANTE!",'conteudo': '', 'Assinatura': 'Att. a direção'}
+
+# imagens dos horários
+HORARIOS = {'3infoA' : './horarios/horario-3infoA.png',
+            '2infoA' : './horarios/horario-2infoA.png',
+            '1infoA' : './horarios/horario-1infoA.png'}
 
 def restricted(func):
     # função de restrição de comandos
@@ -43,6 +48,16 @@ async def registrar_canal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     id_canal = int(id_canal)
     CANAIS_CADASTRADOS.append(id_canal)
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Canal registrado!")
+
+async def ver_horario(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    usuario = update.message.from_user
+    turma = update.message.text.replace("/ver_horario ", "")
+    for horario in HORARIOS.keys():
+        if horario == turma:
+            imagem = HORARIOS[horario]
+            await context.bot.send_photo(chat_id= usuario.id, photo=open(imagem, 'rb'))
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 @restricted
 async def escrever_recado(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -94,8 +109,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Ação cancelada...")
     return ConversationHandler.END
 
-# for canal in CANAIS_CADASTRADOS:
-# await context.bot.send_message(chat_id=canal, text=msg)
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # resposta ao receber um comando não identificado
@@ -107,6 +121,7 @@ if __name__ == '__main__':
     # criando comandos
     start_handler = CommandHandler('start', start)
     registar_canal_handler = CommandHandler('registrar_canal', registrar_canal)
+    ver_horario_handler = CommandHandler('ver_horario', ver_horario)
     recado_handler = ConversationHandler(
         entry_points = [CommandHandler('escrever_recado', escrever_recado)],
         states= {
@@ -120,6 +135,7 @@ if __name__ == '__main__':
     # add comandos ao app
     application.add_handler(start_handler)
     application.add_handler(registar_canal_handler)
+    application.add_handler(ver_horario_handler)
     application.add_handler(recado_handler)
     application.add_handler(no_command_handler)
     

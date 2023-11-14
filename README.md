@@ -11,6 +11,6 @@ Para testar o bot:
 
 - [x] Replicar mensagens entre canais
 - [ ] Agenda de eventos
-- [ ] Consulta de horários
+- [x] Consulta de horários
 - [ ] Recados de avaliações
 - [ ] Sugestões
