@@ -44,12 +44,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Olá! 👋")
 
 async def registrar_canal(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # comando de registro de canais
     id_canal = update.message.text.replace("/registrar_canal ", "")
     id_canal = int(id_canal)
     CANAIS_CADASTRADOS.append(id_canal)
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Canal registrado!")
 
+async def ver_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'O ID deste grupo é: {update.effective_chat.id}\nDICA: utilize este número no comando /registrar_canal para entrar na lista de canais do bot ;)')
+
 async def ver_horario(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # comando para ver horários
     usuario = update.message.from_user
     turma = update.message.text.replace("/ver_horario ", "")
     for horario in HORARIOS.keys():
@@ -121,6 +126,7 @@ if __name__ == '__main__':
     # criando comandos
     start_handler = CommandHandler('start', start)
     registar_canal_handler = CommandHandler('registrar_canal', registrar_canal)
+    ver_id_handler = CommandHandler('ver_id', ver_id)
     ver_horario_handler = CommandHandler('ver_horario', ver_horario)
     recado_handler = ConversationHandler(
         entry_points = [CommandHandler('escrever_recado', escrever_recado)],
@@ -135,6 +141,7 @@ if __name__ == '__main__':
     # add comandos ao app
     application.add_handler(start_handler)
     application.add_handler(registar_canal_handler)
+    application.add_handler(ver_id_handler)
     application.add_handler(ver_horario_handler)
     application.add_handler(recado_handler)
     application.add_handler(no_command_handler)
